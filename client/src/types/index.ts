@@ -15,8 +15,17 @@ export interface Task {
   status: 'pending' | 'in-progress' | 'completed';
   assignedTo: { _id: string; name: string; email: string };
   createdBy: { _id: string; name: string; email: string };
+  attachments?: Attachment[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Attachment {
+  url: string;
+  name: string;
+  type: string;
+  size: number;
+  publicId?: string;
 }
 
 export interface ApiResponse<T> {
@@ -43,6 +52,7 @@ export interface CreateTaskRequest {
   dueDate: string;
   status?: 'pending' | 'in-progress' | 'completed';
   assignedTo: string;
+  attachments?: Attachment[];
 }
 
 export interface UpdateTaskRequest {

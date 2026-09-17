@@ -9,6 +9,7 @@ import { PublicRoute } from '@/components/auth/PublicRoute';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorBoundary } from '@/components/ui/error-boundary';
+import { ToastContainer } from '@/components/ui/toast';
 
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
@@ -83,6 +84,7 @@ function AppContent() {
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
+    <ToastContainer />
     </ErrorBoundary>
   );
 }

@@ -9,11 +9,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ToastContainer } from '@/components/ui/toast';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 export function RegisterPage() {
   const { register: registerUser, resetError } = useAuth();
-  const { toasts, removeToast, error: showError } = useToast();
+  const { error: showError } = useToast();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -44,6 +44,9 @@ export function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
@@ -114,8 +117,6 @@ export function RegisterPage() {
           </CardFooter>
         </form>
       </Card>
-
-      <ToastContainer toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }

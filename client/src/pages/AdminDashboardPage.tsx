@@ -1,5 +1,7 @@
 import { useGetAdminStatsQuery } from '@/store/adminApi';
 import { StatCard } from '@/components/dashboard/StatCard';
+import { StatusChart } from '@/components/charts/StatusChart';
+import { PriorityChart } from '@/components/charts/PriorityChart';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -59,19 +61,12 @@ export default function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="text-lg">Tasks by Status</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Pending</span>
-              <Badge variant="secondary">{stats?.tasksByStatus.pending ?? 0}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">In Progress</span>
-              <Badge variant="secondary">{stats?.tasksByStatus['in-progress'] ?? 0}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Completed</span>
-              <Badge variant="secondary">{stats?.tasksByStatus.completed ?? 0}</Badge>
-            </div>
+          <CardContent>
+            <StatusChart
+              pending={stats?.tasksByStatus.pending ?? 0}
+              inProgress={stats?.tasksByStatus['in-progress'] ?? 0}
+              completed={stats?.tasksByStatus.completed ?? 0}
+            />
           </CardContent>
         </Card>
 
@@ -79,19 +74,12 @@ export default function AdminDashboardPage() {
           <CardHeader>
             <CardTitle className="text-lg">Tasks by Priority</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Low</span>
-              <Badge variant="secondary">{stats?.tasksByPriority.low ?? 0}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">Medium</span>
-              <Badge variant="secondary">{stats?.tasksByPriority.medium ?? 0}</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">High</span>
-              <Badge variant="secondary">{stats?.tasksByPriority.high ?? 0}</Badge>
-            </div>
+          <CardContent>
+            <PriorityChart
+              low={stats?.tasksByPriority.low ?? 0}
+              medium={stats?.tasksByPriority.medium ?? 0}
+              high={stats?.tasksByPriority.high ?? 0}
+            />
           </CardContent>
         </Card>
       </div>

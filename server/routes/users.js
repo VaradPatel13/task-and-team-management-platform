@@ -5,7 +5,7 @@ import adminOnly from '../middleware/adminOnly.js';
 
 const router = Router();
 
-// Get all users (admin only)
-router.get('/', auth, adminOnly, getUsers);
+// Get all users (all authenticated users — needed for task assignment)
+router.get('/', auth, getUsers);
 
 export default router;

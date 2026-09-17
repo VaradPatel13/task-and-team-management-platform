@@ -1,10 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 import { useCreateTaskMutation, useUpdateTaskMutation, useGetUsersQuery } from '@/store/tasksApi';
 import { useToast } from '@/hooks/useToast';
-import { ToastContainer } from '@/components/ui/toast';
 import { createTaskSchema, updateTaskSchema, type CreateTaskFormData } from '@/utils/validation';
 import { TASK_STATUSES, TASK_PRIORITIES } from '@/utils/constants';
 import { extractApiError } from '@/utils/errors';
@@ -13,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Task } from '@/types';
+import { FileUpload, type FileUploadHandle } from '@/components/tasks/FileUpload';
+import type { Task, Attachment } from '@/types';
 
 interface TaskFormProps {
   mode: 'create' | 'edit';
@@ -22,13 +22,15 @@ interface TaskFormProps {
 
 export function TaskForm({ mode, initialData }: TaskFormProps) {
   const navigate = useNavigate();
-  const { toasts, removeToast, success, error: showError } = useToast();
+  const { success, error: showError } = useToast();
   const { data: usersData } = useGetUsersQuery();
+  const fileUploadRef = useRef<FileUploadHandle>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
   const [updateTask, { isLoading: isUpdating }] = useUpdateTaskMutation();
 
-  const isLoading = isCreating || isUpdating;
+  const isLoading = isCreating || isUpdating || isUploading;
 
   const {
     register,
@@ -57,6 +59,20 @@ export function TaskForm({ mode, initialData }: TaskFormProps) {
 
   const onSubmit = async (data: CreateTaskFormData) => {
     try {
+      let attachments: Attachment[] = [];
+
+      // Upload files if any are pending
+      if (fileUploadRef.current?.hasPendingFiles()) {
+        setIsUploading(true);
+        try {
+          attachments = await fileUploadRef.current.uploadAll();
+        } catch {
+          showError('Some files failed to upload. Task will be created without them.');
+        } finally {
+          setIsUploading(false);
+        }
+      }
+
       if (mode === 'create') {
         await createTask({
           title: data.title,
@@ -65,6 +81,7 @@ export function TaskForm({ mode, initialData }: TaskFormProps) {
           dueDate: data.dueDate,
           status: data.status,
           assignedTo: data.assignedTo,
+          attachments: attachments.length > 0 ? attachments : undefined,
         }).unwrap();
         success('Task created successfully');
         navigate('/tasks');
@@ -101,7 +118,6 @@ export function TaskForm({ mode, initialData }: TaskFormProps) {
   const userOptions = users.map((u) => ({ value: u.id, label: `${u.name} (${u.email})` }));
 
   return (
-    <>
     <form onSubmit={handleSubmit(onSubmit)}>
       <Card>
         <CardHeader>
@@ -129,6 +145,15 @@ export function TaskForm({ mode, initialData }: TaskFormProps) {
             {errors.description?.message && (
               <p className="text-xs text-destructive">{errors.description.message}</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>Attachments</Label>
+            <FileUpload
+              ref={fileUploadRef}
+              maxFiles={5}
+              accept="image/*,.pdf,.doc,.docx,.txt"
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -186,12 +211,14 @@ export function TaskForm({ mode, initialData }: TaskFormProps) {
             Cancel
           </Button>
           <Button type="submit" isLoading={isLoading}>
-            {mode === 'create' ? 'Create Task' : 'Save Changes'}
+            {mode === 'create'
+              ? isUploading
+                ? 'Uploading files...'
+                : 'Create Task'
+              : 'Save Changes'}
           </Button>
         </CardFooter>
       </Card>
     </form>
-    <ToastContainer toasts={toasts} onRemove={removeToast} />
-    </>
   );
 }

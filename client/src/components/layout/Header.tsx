@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { UserMenu } from '@/components/layout/UserMenu';
+import { ThemeToggle } from '@/components/layout/ThemeToggle';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -26,7 +27,10 @@ export const Header = memo(function Header({ onMenuClick }: HeaderProps) {
 
       <div className="flex-1" />
 
-      <UserMenu />
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <UserMenu />
+      </div>
     </header>
   );
 });

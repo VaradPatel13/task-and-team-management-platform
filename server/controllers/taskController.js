@@ -114,7 +114,7 @@ export const getTask = catchAsync(async (req, res) => {
 
 // Create a new task.
 export const createTask = catchAsync(async (req, res) => {
-  const { title, description, priority, dueDate, status, assignedTo } = req.body;
+  const { title, description, priority, dueDate, status, assignedTo, attachments } = req.body;
 
   // Verify assigned user exists
   const assignedUser = await User.findById(assignedTo);
@@ -133,6 +133,7 @@ export const createTask = catchAsync(async (req, res) => {
     status,
     assignedTo,
     createdBy: req.user._id,
+    attachments: attachments || [],
   });
 
   const populatedTask = await task.populate([
@@ -182,7 +183,7 @@ export const updateTask = catchAsync(async (req, res) => {
   }
 
   // Only allow known fields through
-  const allowedFields = ['title', 'description', 'priority', 'dueDate', 'status', 'assignedTo'];
+  const allowedFields = ['title', 'description', 'priority', 'dueDate', 'status', 'assignedTo', 'attachments'];
   const updates = {};
 
   for (const field of allowedFields) {
@@ -251,5 +252,37 @@ export const deleteTask = catchAsync(async (req, res) => {
   return res.status(200).json({
     success: true,
     data: null,
+  });
+});
+
+// Duplicate a task. Copies title (+ " (Copy)"), description, priority, dueDate, status, assignedTo.
+export const duplicateTask = catchAsync(async (req, res) => {
+  const original = await Task.findById(req.params.id);
+
+  if (!original) {
+    return res.status(404).json({
+      success: false,
+      error: 'Task not found',
+    });
+  }
+
+  const task = await Task.create({
+    title: `${original.title} (Copy)`,
+    description: original.description,
+    priority: original.priority,
+    dueDate: original.dueDate,
+    status: 'pending',
+    assignedTo: original.assignedTo,
+    createdBy: req.user._id,
+  });
+
+  const populatedTask = await task.populate([
+    { path: 'assignedTo', select: 'name email' },
+    { path: 'createdBy', select: 'name email' },
+  ]);
+
+  return res.status(201).json({
+    success: true,
+    data: { task: populatedTask },
   });
 });

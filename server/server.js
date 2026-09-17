@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js';
 import taskRoutes from './routes/tasks.js';
 import userRoutes from './routes/users.js';
 import adminRoutes from './routes/admin.js';
+import uploadRoutes from './routes/upload.js';
 import errorHandler from './middleware/errorHandler.js';
 
 dotenv.config();
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/upload', uploadRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

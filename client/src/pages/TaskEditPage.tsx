@@ -1,12 +1,14 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, Navigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useGetTaskQuery } from '@/store/tasksApi';
+import { useAuth } from '@/hooks/useAuth';
 import { TaskForm } from '@/components/tasks/TaskForm';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export function TaskEditPage() {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const { data, isLoading, isError } = useGetTaskQuery(id!);
 
   if (isLoading) {
@@ -29,6 +31,13 @@ export function TaskEditPage() {
     );
   }
 
+  const task = data.data.task;
+  const isCreator = user?.id === task.createdBy?._id;
+
+  if (!isCreator) {
+    return <Navigate to={`/tasks/${id}`} replace />;
+  }
+
   return (
     <div className="space-y-6 max-w-2xl">
       <div className="flex items-center gap-4">
@@ -39,7 +48,7 @@ export function TaskEditPage() {
         </Link>
         <h1 className="text-2xl font-bold">Edit Task</h1>
       </div>
-      <TaskForm mode="edit" initialData={data.data.task} />
+      <TaskForm mode="edit" initialData={task} />
     </div>
   );
 }

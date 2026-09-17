@@ -82,6 +82,13 @@ export const tasksApi = createApi({
         { type: 'Task', id: 'LIST' },
       ],
     }),
+    duplicateTask: builder.mutation<ApiResponse<{ task: Task }>, string>({
+      query: (id) => ({
+        url: `/tasks/${id}/duplicate`,
+        method: 'POST',
+      }),
+      invalidatesTags: [{ type: 'Task', id: 'LIST' }],
+    }),
     getUsers: builder.query<ApiResponse<{ users: User[] }>, void>({
       query: () => '/users',
     }),
@@ -94,5 +101,6 @@ export const {
   useCreateTaskMutation,
   useUpdateTaskMutation,
   useDeleteTaskMutation,
+  useDuplicateTaskMutation,
   useGetUsersQuery,
 } = tasksApi;

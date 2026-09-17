@@ -5,6 +5,7 @@ import { useGetTasksQuery } from '@/store/tasksApi';
 import { StatCard } from '@/components/dashboard/StatCard';
 import { EmptyState } from '@/components/dashboard/EmptyState';
 import { DashboardSkeleton } from '@/components/dashboard/DashboardSkeleton';
+import { StatusChart } from '@/components/charts/StatusChart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -75,6 +76,15 @@ export function DashboardPage() {
           description="Finished tasks"
         />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Task Status Overview</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <StatusChart pending={stats.pending} inProgress={stats.inProgress} completed={stats.completed} />
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">

@@ -6,6 +6,7 @@ import {
   createTask,
   updateTask,
   deleteTask,
+  duplicateTask,
 } from '../controllers/taskController.js';
 import validate from '../middleware/validate.js';
 import auth from '../middleware/auth.js';
@@ -47,6 +48,13 @@ router.get(
       .withMessage('Limit must be between 1 and 50'),
   ]),
   getTasks
+);
+
+// POST /api/tasks/:id/duplicate — Duplicate a task
+router.post(
+  '/:id/duplicate',
+  validate([param('id').isMongoId().withMessage('Invalid task ID')]),
+  duplicateTask
 );
 
 // GET /api/tasks/:id — Get single task

@@ -24,6 +24,26 @@
   --radius-xl: 0.75rem;
 }
 
+.dark {
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+  --color-card: #171717;
+  --color-card-foreground: #fafafa;
+  --color-primary: #fafafa;
+  --color-primary-foreground: #171717;
+  --color-secondary: #262626;
+  --color-secondary-foreground: #fafafa;
+  --color-muted: #262626;
+  --color-muted-foreground: #a3a3a3;
+  --color-accent: #262626;
+  --color-accent-foreground: #fafafa;
+  --color-destructive: #dc2626;
+  --color-destructive-foreground: #fafafa;
+  --color-border: #404040;
+  --color-input: #404040;
+  --color-ring: #d4d4d4;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -32,4 +52,22 @@
     @apply bg-background text-foreground;
     font-family: Inter, system-ui, sans-serif;
   }
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.toast-animate-in {
+  animation: slide-in-right 0.3s ease-out;
+}
+
+.toast-animate-out {
+  animation: fade-out 0.2s ease-in forwards;
 }

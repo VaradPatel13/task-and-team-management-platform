@@ -43,6 +43,15 @@ const taskSchema = new mongoose.Schema(
       ref: 'User',
       required: [true, 'Creator is required'],
     },
+    attachments: [
+      {
+        url: { type: String, required: true },
+        name: { type: String, required: true },
+        type: { type: String, required: true },
+        size: { type: Number, required: true },
+        publicId: { type: String },
+      },
+    ],
   },
   {
     timestamps: true,
