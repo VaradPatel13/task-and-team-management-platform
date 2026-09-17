@@ -1,15 +1,13 @@
 import { memo, useCallback } from 'react';
 import { Menu } from 'lucide-react';
-import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { UserMenu } from '@/components/layout/UserMenu';
 
 interface HeaderProps {
   onMenuClick: () => void;
 }
 
 export const Header = memo(function Header({ onMenuClick }: HeaderProps) {
-  const { user } = useAuth();
-
   const handleClick = useCallback(() => {
     onMenuClick();
   }, [onMenuClick]);
@@ -28,17 +26,7 @@ export const Header = memo(function Header({ onMenuClick }: HeaderProps) {
 
       <div className="flex-1" />
 
-      <div className="flex items-center gap-3">
-        <div className="text-right hidden sm:block">
-          <p className="text-sm font-medium">{user?.name}</p>
-          <p className="text-xs text-muted-foreground">{user?.email}</p>
-        </div>
-        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
-          <span className="text-sm font-medium text-primary">
-            {user?.name?.charAt(0).toUpperCase()}
-          </span>
-        </div>
-      </div>
+      <UserMenu />
     </header>
   );
 });

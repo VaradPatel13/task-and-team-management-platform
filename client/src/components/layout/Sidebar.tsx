@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, ListTodo, PlusCircle, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, ListTodo, PlusCircle, LogOut, X, Shield, Users } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/utils/cn';
 
@@ -10,6 +10,11 @@ const navItems = [
   { to: '/tasks/new', label: 'Create Task', icon: PlusCircle },
 ] as const;
 
+const adminItems = [
+  { to: '/admin', label: 'Admin Dashboard', icon: Shield },
+  { to: '/admin/users', label: 'Manage Users', icon: Users },
+] as const;
+
 interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,7 +22,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const handleLogout = useCallback(() => {
     logout();
@@ -73,6 +78,36 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               );
             })}
           </nav>
+
+          {user?.role === 'admin' && (
+            <nav className="px-3 py-2 border-t">
+              <p className="px-3 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                Admin
+              </p>
+              <div className="space-y-1 mt-1">
+                {adminItems.map((item) => {
+                  const isActive = location.pathname === item.to ||
+                    (item.to === '/admin' && location.pathname.startsWith('/admin/'));
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={onClose}
+                      className={cn(
+                        'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                        isActive
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                      )}
+                    >
+                      <item.icon className="h-5 w-5" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </nav>
+          )}
 
           <div className="px-3 py-4 border-t">
             <button

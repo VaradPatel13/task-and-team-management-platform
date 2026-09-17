@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { store } from '@/store/store';
 import { useAuth } from '@/hooks/useAuth';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { AdminRoute } from '@/components/auth/AdminRoute';
 import { PublicRoute } from '@/components/auth/PublicRoute';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,6 +18,8 @@ const TaskCreatePage = lazy(() => import('@/pages/TaskCreatePage'));
 const TaskDetailPage = lazy(() => import('@/pages/TaskDetailPage'));
 const TaskEditPage = lazy(() => import('@/pages/TaskEditPage'));
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage'));
+const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage'));
+const AdminUsersPage = lazy(() => import('@/pages/AdminUsersPage'));
 
 function PageSkeleton() {
   return (
@@ -72,6 +75,9 @@ function AppContent() {
           <Route path="tasks/new" element={<TaskCreatePage />} />
           <Route path="tasks/:id" element={<TaskDetailPage />} />
           <Route path="tasks/:id/edit" element={<TaskEditPage />} />
+
+          <Route path="admin" element={<AdminRoute><AdminDashboardPage /></AdminRoute>} />
+          <Route path="admin/users" element={<AdminRoute><AdminUsersPage /></AdminRoute>} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
