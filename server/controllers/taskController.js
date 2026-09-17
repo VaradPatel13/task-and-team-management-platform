@@ -96,8 +96,8 @@ export const getTask = catchAsync(async (req, res) => {
   // Authorization: check involvement
   if (req.user.role !== 'admin') {
     const userId = req.user._id.toString();
-    const creatorId = task.createdBy._id.toString();
-    const assigneeId = task.assignedTo._id.toString();
+    const creatorId = task.createdBy?._id?.toString();
+    const assigneeId = task.assignedTo?._id?.toString();
     if (creatorId !== userId && assigneeId !== userId) {
       return res.status(403).json({
         success: false,
